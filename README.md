@@ -1,10 +1,10 @@
 # SDK PORTOSYNC
 
-Un SDK Java simple et efficace pour récupérer les jours de fermeture officiels des marchés financiers **Euronext Paris** et **NYSE** via notre API **Portosync**.
+A simple and efficient Java SDK to retrieve official market closure dates for **Euronext Paris** and **NYSE** via our API **Portosync**.
 
 ## Installation
 
-Ajoutez la dépendance dans votre pom.xml (Maven Central ou votre repository privé) :
+Add the dependency to your pom.xml (Maven Central ou votre repository privé) :
 
 ```xml
 <dependency>
@@ -16,7 +16,7 @@ Ajoutez la dépendance dans votre pom.xml (Maven Central ou votre repository pri
 
 ## Configuration
 
-Avant utilisation, initialisez une instance du client avec en paramètre une instance de `httpClient` configurée comme vous le souhaitez :
+Before using the client, you need to initialize it with an instance of your `httpClient` configured as you want :
 
 ```java
 import io.github.joachimdi.clients.PortosyncApiClient;
@@ -24,30 +24,38 @@ import io.github.joachimdi.clients.PortosyncApiClient;
 import java.net.http.HttpClient;
 
 HttpClient httpClient = HttpClient.newHttpClient();
-PortosyncApiClient portosyncApiClient = new PortosyncApiClient(httpClient);
+PortosyncApiClient client = new PortosyncApiClient(httpClient);
 ```
 
-## Utilisation
+## Usage
 
-1. Récupérer les jours fériés du marché **Euronext Paris**
+1. Get holidays for **Euronext Paris**
 
 ```java
 import io.github.joachimdi.enums.StockMarket;
+import io.github.joachimdi.clients.PortosyncApiClient;
+import java.net.http.HttpClient;
 
 import java.time.LocalDate;
 import java.util.Set;
 
-Set<LocalDate> holidays = portosyncApiClient.getHolidays(StockMarket.EURONEXT_PARIS, 2025);
+HttpClient httpClient = HttpClient.newHttpClient();
+PortosyncApiClient client = new PortosyncApiClient(httpClient);
+Set<LocalDate> holidays = client.getHolidays(StockMarket.EURONEXT_PARIS, 2025);
 ```
-`StockMarket` est une enum présente dans le SDK qui donne la liste des marchés financiers disponibles.
+`StockMarket` is an enum provide by the SDK with the available stock markets.
 
-2. Récupérer les jours fériés du marché **NYSE** 
+2. Get holidays for **NYSE** 
 
 ```java
 import io.github.joachimdi.enums.StockMarket;
+import io.github.joachimdi.clients.PortosyncApiClient;
+import java.net.http.HttpClient;
 
 import java.time.LocalDate;
 import java.util.Set;
 
-Set<LocalDate> holidays = portosyncApiClient.getHolidays(StockMarket.NYSE, 2025);
+HttpClient httpClient = HttpClient.newHttpClient();
+PortosyncApiClient client = new PortosyncApiClient(httpClient);
+Set<LocalDate> holidays = client.getHolidays(StockMarket.NYSE, 2025);
 ```
