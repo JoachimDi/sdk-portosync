@@ -1,7 +1,7 @@
 package io.github.joachimdi.clients;
 
 import java.time.LocalDate;
-import java.util.Set;
+import java.util.List;
 
-record GetRebalancingCalendarResponseBody(Set<LocalDate> rebalancingDates) {
+record GetRebalancingCalendarResponseBody(List<LocalDate> rebalancingDates) {
 }

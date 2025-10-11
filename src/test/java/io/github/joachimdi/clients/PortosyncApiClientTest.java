@@ -13,7 +13,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.LocalDate;
-import java.util.Set;
+import java.util.List;
 
 import static io.github.joachimdi.clients.Constants.HEADER_API_KEY;
 import static io.github.joachimdi.clients.Constants.MARKET_CALENDAR_API_URL;
@@ -59,14 +59,14 @@ class PortosyncApiClientTest {
         when(httpClient.send(any(HttpRequest.class), any(HttpResponse.BodyHandler.class)))
                 .thenReturn(response);
 
-        Set<LocalDate> holidays = portosyncApiClient.getHolidaysByYearAndExchange(2025, StockMarket.NYSE);
+        List<LocalDate> holidays = portosyncApiClient.getHolidaysByYearAndExchange(2025, StockMarket.NYSE);
 
         verify(httpClient).send(requestCaptor.capture(), eq(HttpResponse.BodyHandlers.ofString()));
 
         assertThat(requestCaptor.getValue().uri()).hasToString(url);
         assertThat(requestCaptor.getValue().headers().firstValue(HEADER_API_KEY).orElse(null)).hasToString("api-key");
         assertThat(holidays).containsAll(
-                Set.of(
+                List.of(
                         LocalDate.of(2025, 1, 1),
                         LocalDate.of(2025, 12, 26),
                         LocalDate.of(2025, 12, 25)
@@ -101,7 +101,7 @@ class PortosyncApiClientTest {
         when(httpClient.send(any(HttpRequest.class), any(HttpResponse.BodyHandler.class)))
                 .thenReturn(response);
 
-        Set<LocalDate> holidays = portosyncApiClient.getHolidaysForCurrentYearByExchange(StockMarket.NYSE);
+        List<LocalDate> holidays = portosyncApiClient.getHolidaysForCurrentYearByExchange(StockMarket.NYSE);
 
         verify(httpClient).send(requestCaptor.capture(), eq(HttpResponse.BodyHandlers.ofString()));
 
@@ -109,7 +109,7 @@ class PortosyncApiClientTest {
         assertThat(requestCaptor.getValue().headers().firstValue(HEADER_API_KEY).orElse(null)).hasToString("api-key");
 
         assertThat(holidays).containsAll(
-                Set.of(
+                List.of(
                         LocalDate.of(2025, 1, 1),
                         LocalDate.of(2025, 12, 26),
                         LocalDate.of(2025, 12, 25)
@@ -138,12 +138,16 @@ class PortosyncApiClientTest {
                         """);
         when(httpClient.send(any(HttpRequest.class), any(HttpResponse.BodyHandler.class))).thenReturn(response);
 
-        LocalDate nextRebalancingDate = portosyncApiClient.getNextRebalancingDate(LocalDate.of(2025, 11, 26), RebalancingFrequency.MONTHLY);
+        LocalDate nextRebalancingDate = portosyncApiClient.getNextRebalancingDate(
+                LocalDate.of(2025, 11, 26),
+                RebalancingFrequency.MONTHLY,
+                StockMarket.EURONEXT_PARIS
+        );
 
         verify(httpClient).send(requestCaptor.capture(), eq(HttpResponse.BodyHandlers.ofString()));
         HttpRequest request = requestCaptor.getValue();
         assertThat(nextRebalancingDate).isEqualTo(LocalDate.of(2025, 12, 26));
-        assertThat(request.uri().toString()).contains(REBALANCING_DATE_API_URL + "next");
+        assertThat(request.uri().toString()).contains(REBALANCING_DATE_API_URL + "EURONEXT_PARIS/next");
         assertThat(request.uri())
                 .hasParameter("previousRebalancingDate", "2025-11-26")
                 .hasParameter("frequency", "MENSUEL");
@@ -165,20 +169,20 @@ class PortosyncApiClientTest {
                         """);
         when(httpClient.send(any(HttpRequest.class), any(HttpResponse.BodyHandler.class))).thenReturn(response);
 
-        Set<LocalDate> calendar = portosyncApiClient
-                .getRebalancingCalendar(LocalDate.of(2025, 1, 26), RebalancingFrequency.QUARTERLY);
+        List<LocalDate> calendar = portosyncApiClient
+                .getRebalancingCalendar(LocalDate.of(2025, 1, 26), RebalancingFrequency.QUARTERLY, StockMarket.EURONEXT_PARIS);
 
         verify(httpClient).send(requestCaptor.capture(), eq(HttpResponse.BodyHandlers.ofString()));
         HttpRequest request = requestCaptor.getValue();
         assertThat(calendar).containsAll(
-                Set.of(
+                List.of(
                         LocalDate.of(2025, 1, 26),
                         LocalDate.of(2025, 4, 26),
                         LocalDate.of(2025, 7, 26),
                         LocalDate.of(2025, 10, 26)
                 )
         );
-        assertThat(request.uri().toString()).contains(REBALANCING_DATE_API_URL + "calendar");
+        assertThat(request.uri().toString()).contains(REBALANCING_DATE_API_URL + "EURONEXT_PARIS/calendar");
         assertThat(request.uri())
                 .hasParameter("startRebalancingDate", "2025-01-26")
                 .hasParameter("frequency", "TRIMESTRIEL");

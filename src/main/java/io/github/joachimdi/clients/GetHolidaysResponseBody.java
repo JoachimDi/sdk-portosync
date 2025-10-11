@@ -1,7 +1,7 @@
 package io.github.joachimdi.clients;
 
 import java.time.LocalDate;
-import java.util.Set;
+import java.util.List;
 
-record GetHolidaysResponseBody(Set<LocalDate> closingDates) {
+record GetHolidaysResponseBody(List<LocalDate> closingDates) {
 }

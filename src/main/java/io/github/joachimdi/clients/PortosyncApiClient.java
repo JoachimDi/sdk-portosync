@@ -12,9 +12,9 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 
 import static io.github.joachimdi.clients.ClientHelper.buildUri;
 import static io.github.joachimdi.clients.ClientHelper.checkResponseStatus;
@@ -49,7 +49,7 @@ public final class PortosyncApiClient {
      * @param stockMarket stock market targeted
      * @return the closing dates
      */
-    public Set<LocalDate> getHolidaysForCurrentYearByExchange(StockMarket stockMarket) {
+    public List<LocalDate> getHolidaysForCurrentYearByExchange(StockMarket stockMarket) {
         Objects.requireNonNull(stockMarket, "StockMarket must not be null");
         URI uri = buildUri(MARKET_CALENDAR_API_URL + stockMarket.name() + "/holidays", Map.of());
         return sendRequest(uri, GetHolidaysResponseBody.class).closingDates();
@@ -61,7 +61,7 @@ public final class PortosyncApiClient {
      * @param stockMarket targeted stock market
      * @return the closing dates
      */
-    public Set<LocalDate> getHolidaysByYearAndExchange(Integer year, StockMarket stockMarket) {
+    public List<LocalDate> getHolidaysByYearAndExchange(Integer year, StockMarket stockMarket) {
         Objects.requireNonNull(year, "Year must not be null");
         Objects.requireNonNull(stockMarket, "StockMarket must not be null");
         URI uri = buildUri(MARKET_CALENDAR_API_URL + stockMarket.name() + "/holidays/" + year, Map.of());
@@ -74,12 +74,12 @@ public final class PortosyncApiClient {
      * @param frequency the frequency of your rebalancing
      * @return The date of the next rebalancing
      */
-    public LocalDate getNextRebalancingDate(LocalDate lastRebalancingDate, RebalancingFrequency frequency) {
+    public LocalDate getNextRebalancingDate(LocalDate lastRebalancingDate, RebalancingFrequency frequency, StockMarket market) {
         Objects.requireNonNull(lastRebalancingDate, "Last rebalancing date must not be null");
         Objects.requireNonNull(frequency, "Frequency must not be null");
 
         URI uri = buildUri(
-                REBALANCING_DATE_API_URL + "next",
+                REBALANCING_DATE_API_URL + market.name() + "/next",
                 Map.of(
                         "previousRebalancingDate", lastRebalancingDate.format(DATE_FORMATTER),
                         "frequency", frequency.getValue()
@@ -95,12 +95,12 @@ public final class PortosyncApiClient {
      * @param frequency the frequency
      * @return The dates of rebalancing
      */
-    public Set<LocalDate> getRebalancingCalendar(LocalDate startRebalancingDate, RebalancingFrequency frequency) {
+    public List<LocalDate> getRebalancingCalendar(LocalDate startRebalancingDate, RebalancingFrequency frequency, StockMarket market) {
         Objects.requireNonNull(startRebalancingDate, "Start rebalancing date must not be null");
         Objects.requireNonNull(frequency, "Frequency must not be null");
 
         URI uri = buildUri(
-                REBALANCING_DATE_API_URL + "calendar",
+                REBALANCING_DATE_API_URL + market.name() + "/calendar",
                 Map.of(
                         "startRebalancingDate", startRebalancingDate.format(DATE_FORMATTER),
                         "frequency", frequency.getValue()
