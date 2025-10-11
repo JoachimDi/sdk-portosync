@@ -10,7 +10,7 @@ Add the dependency to your pom.xml (Maven Central ou votre repository privé) :
 <dependency>
     <groupId>io.github.joachimdi</groupId>
     <artifactId>sdk-portosync</artifactId>
-    <version>1.0.1</version>
+    <version>1.0.2</version>
 </dependency>
 ```
 
@@ -61,7 +61,7 @@ import java.time.LocalDate;
 import java.util.Set;
 
 PortosyncApiClient client = PortosyncApiClient.withDefaultHttpClient("api-key");
-LocalDate nextRebalancingDate = client.getNextRebalancingDate(LocalDate.of(2024, 1, 1), RebalancingFrequency.MONTHLY);
+LocalDate nextRebalancingDate = client.getNextRebalancingDate(LocalDate.of(2024, 1, 1), RebalancingFrequency.MONTHLY, StockMarket.NYSE);
 ```
 `RebalancingFrequency` is an enum provide by the SDK with the available rebalancing frequency.
 
@@ -76,5 +76,5 @@ import java.time.LocalDate;
 import java.util.Set;
 
 PortosyncApiClient client = PortosyncApiClient.withDefaultHttpClient("api-key");
-LocalDate rebalancingCalendar = client.getRebalancingCalendar(LocalDate.of(2024, 1, 1), RebalancingFrequency.MONTHLY);
+LocalDate rebalancingCalendar = client.getRebalancingCalendar(LocalDate.of(2024, 1, 1), RebalancingFrequency.MONTHLY, StockMarket.NYSE);
 ```
